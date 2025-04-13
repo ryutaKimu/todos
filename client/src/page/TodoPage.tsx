@@ -3,18 +3,20 @@ import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
 type TodoPageProps = {
-  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+	setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+type Todo = {
+	id: number;
+	title: string;
 };
 
 export const TodoPage: React.FC<TodoPageProps> = ({ setAuthenticated }) => {
-	type Todo = {
-		id: number;
-		title: string;
-	};
-
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const [todos, setTodos] = useState<Todo[]>([]);
 	const [title, setTitle] = useState<string>("");
+	const [editId, setEditId] = useState<number | null>(null);
+	const [editTitle, setEditTitle] = useState<string>("");
 
 	const getTodo = async () => {
 		try {
@@ -36,16 +38,37 @@ export const TodoPage: React.FC<TodoPageProps> = ({ setAuthenticated }) => {
 		}
 	};
 
-	const handleLogout = async()=>{
-		try{
-			await api.post("/logout")
-			localStorage.removeItem('authToken')
-			setAuthenticated(false)
-			navigate('/')
-		}catch(error){
-			console.error('ログアウトに失敗しました', error)
+	const handleLogout = async () => {
+		try {
+			await api.post("/logout");
+			localStorage.removeItem("authToken");
+			setAuthenticated(false);
+			navigate("/");
+		} catch (error) {
+			console.error("ログアウトに失敗しました", error);
 		}
-	}
+	};
+
+	const updateTodo = async (id: number) => {
+		try {
+			const response = await api.put(`/todo/${id}`, { title: editTitle });
+			setEditId(null);
+			setEditTitle("");
+			const updatedTodo = response.data.todo;
+			setTodos((prevTodos) => {
+				return prevTodos.map((todo) =>
+					todo.id === updatedTodo.id ? updatedTodo : todo
+				);
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleEdit = (todo: Todo) => {
+		setEditId(todo.id);
+		setEditTitle(todo.title);
+	};
 
 	useEffect(() => {
 		getTodo();
@@ -65,10 +88,29 @@ export const TodoPage: React.FC<TodoPageProps> = ({ setAuthenticated }) => {
 			</form>
 			<ul>
 				{todos.map((todo) => (
-					<li key={todo.id}>{todo.title}</li>
+					<li key={todo.id}>
+						{editId === todo.id ? (
+							<>
+								<input
+									type="text"
+									value={editTitle}
+									onChange={(e) => setEditTitle(e.target.value)}
+								/>
+								<button onClick={() => updateTodo(todo.id)}>保存</button>
+								<button onClick={() => setEditId(null)}>キャンセル</button>
+							</>
+						) : (
+							<>
+								{todo.title}
+								<button onClick={() => handleEdit(todo)}>編集</button>
+							</>
+						)}
+					</li>
 				))}
 			</ul>
-			<button type="submit" onClick={handleLogout}>ログアウト</button>
+			<button type="submit" onClick={handleLogout}>
+				ログアウト
+			</button>
 		</>
 	);
 };
