@@ -25,7 +25,7 @@ class TodoController extends Controller
     }
 
     public function store(Request $request)
-    {   
+    {
         if (!Auth::check()) {
             return response()->json(['message' => '認証されていません'], 401);
         }
@@ -36,5 +36,22 @@ class TodoController extends Controller
         $todo->save();
 
         return response()->json(['todo' => $todo]);
+    }
+
+    public function edit(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => '認証されていません'], 401);
+        }
+        $input = $request->input('title');
+        $targetTodo = $this->todo->find($id);
+        if (!$targetTodo) {
+            return response()->json(['message' => 'Todoが見つかりません'], 404);
+        }
+        $targetTodo->title = $input;
+        $targetTodo->save();
+        
+
+        return response()->json(['todo' => $targetTodo]);
     }
 }
