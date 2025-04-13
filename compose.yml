@@ -46,6 +46,7 @@ services:
       - "3306:3306"
     volumes:
       - dbdata:/var/lib/mysql
+      - ./docker/db/my.conf:/etc/mysql/conf.d/my.cnf
 
 volumes:
   dbdata:

@@ -5,6 +5,7 @@ import api from "../api/axios";
 export const LoginPage: React.FC = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const navigate = useNavigate()
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -17,7 +18,7 @@ export const LoginPage: React.FC = () => {
 
 			if (response.status === 200) {
 				localStorage.setItem("authToken", response.data.token);
-				alert("ログイン成功");
+				navigate('/todos')
 			}
 		} catch (error) {
 			console.error(error);
