@@ -25,10 +25,7 @@ class TodoController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $user = User::find(1);
-        Auth::login($user);
-        
+    {   
         if (!Auth::check()) {
             return response()->json(['message' => '認証されていません'], 401);
         }
