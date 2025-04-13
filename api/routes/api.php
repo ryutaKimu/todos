@@ -10,6 +10,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::get('/todo', [TodoController::class, 'index']);
-Route::post('/todo', [TodoController::class, 'store']);
+Route::middleware('auth:sanctum')->group(function(){
+    Route::get('/todo', [TodoController::class, 'index']);
+    Route::post('/todo', [TodoController::class, 'store']);
+});

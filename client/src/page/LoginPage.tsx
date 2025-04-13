@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
-export const LoginPage: React.FC = () => {
+type TodoPageProps = {
+  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export const LoginPage: React.FC<TodoPageProps> = ({setAuthenticated}) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const navigate = useNavigate()
@@ -18,6 +22,7 @@ export const LoginPage: React.FC = () => {
 
 			if (response.status === 200) {
 				localStorage.setItem("authToken", response.data.token);
+				setAuthenticated(true);
 				navigate('/todos')
 			}
 		} catch (error) {
