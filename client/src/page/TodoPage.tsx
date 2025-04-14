@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-
-type TodoPageProps = {
-	setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-};
+import { useAuthStore } from "../store/authStore";
 
 type Todo = {
 	id: number;
 	title: string;
 };
 
-export const TodoPage: React.FC<TodoPageProps> = ({ setAuthenticated }) => {
+export const TodoPage: React.FC = () => {
+	const setAuthenticated = useAuthStore((state) => state.setAuthenticated)
 	const navigate = useNavigate();
 	const [todos, setTodos] = useState<Todo[]>([]);
 	const [title, setTitle] = useState<string>("");
