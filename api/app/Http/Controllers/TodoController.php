@@ -50,8 +50,20 @@ class TodoController extends Controller
         }
         $targetTodo->title = $input;
         $targetTodo->save();
-        
+
 
         return response()->json(['todo' => $targetTodo]);
+    }
+
+    public function delete($id)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => '認証されていません'], 401);
+        }
+
+        $targetTodo = $this->todo->find($id);
+        $targetTodo->delete();
+
+        return response()->json(['message' => '削除しました。']);
     }
 }

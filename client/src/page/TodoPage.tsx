@@ -38,6 +38,15 @@ export const TodoPage: React.FC<TodoPageProps> = ({ setAuthenticated }) => {
 		}
 	};
 
+	const deleteTodo = async (id:number)=>{
+		try{
+			await api.delete(`/todo/${id}`);
+			setTodos(prev => prev.filter(todo => todo.id !== id))
+		}catch(error){
+			console.error(error)
+		}
+	}
+
 	const handleLogout = async () => {
 		try {
 			await api.post("/logout");
@@ -105,6 +114,7 @@ export const TodoPage: React.FC<TodoPageProps> = ({ setAuthenticated }) => {
 								<button onClick={() => handleEdit(todo)}>編集</button>
 							</>
 						)}
+						<button onClick={()=>deleteTodo(todo.id)}>削除</button>
 					</li>
 				))}
 			</ul>
