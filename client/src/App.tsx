@@ -6,28 +6,24 @@ import {
 } from "react-router-dom";
 import { LoginPage } from "./page/LoginPage";
 import { TodoPage } from "./page/TodoPage";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useAuthStore } from "./store/authStore";
 
 const App: React.FC = () => {
-	const [authenticated, setAuthenticated] = useState<boolean>(false);
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
 	useEffect(() => {
 		const token = localStorage.getItem("authToken");
 		setAuthenticated(!!token);
 	}, []);
-	
+
 	return (
 		<Router>
 			<Routes>
-				<Route path="/" element={<LoginPage setAuthenticated = {setAuthenticated} />} />
+				<Route path="/" element={<LoginPage />} />
 				<Route
 					path="/todos"
-					element={
-						authenticated ? (
-							<TodoPage setAuthenticated={setAuthenticated} />
-						) : (
-							<Navigate to="/" />
-						)
-					}
+					element={isAuthenticated ? <TodoPage /> : <Navigate to="/" />}
 				/>
 				<Route path="*" element={<Navigate to="/" />} />
 			</Routes>
